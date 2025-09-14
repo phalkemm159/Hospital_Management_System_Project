@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HMS Login - Professional Access</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Custom CSS for professional and futuristic background */
+    body {
+      font-family: 'Inter', sans-serif;
+      background-image: url("{{ url_for('static', filename='images/hospital_bg.png') }}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden; /* Prevent scroll for background effect */
+      position: relative; /* For pseudo-elements */
+    }
+
+    /* Abstract futuristic patterns - subtle effect */
+    body::before,
+    body::after {
+      content: '';
+      position: absolute;
+      background: rgba(144, 202, 249, 0.1); /* Light blue overlay */
+      border-radius: 50%;
+      filter: blur(100px);
+      z-index: -1;
+    }
+
+    body::before {
+      width: 400px;
+      height: 400px;
+      top: -100px;
+      left: -100px;
+      animation: moveEffect1 15s infinite alternate ease-in-out;
+    }
+
+    body::after {
+      width: 300px;
+      height: 300px;
+      bottom: -100px;
+      right: -100px;
+      animation: moveEffect2 15s infinite alternate-reverse ease-in-out;
+    }
+
+    /* Animation for background elements */
+    @keyframes moveEffect1 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    @keyframes moveEffect2 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50px, -50px); }
+    }
+
+    /* Custom glow for buttons on hover */
+    .btn-primary:hover {
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); /* Tailwind blue-500 equivalent glow */
+    }
+
+    /* Custom glow for inputs on focus */
+    .input-focus-glow:focus {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 0 0 6px rgba(59, 130, 246, 0.15); /* Ring with subtle glow */
+      border-color: #3b82f6; /* Tailwind blue-500 */
+    }
+  </style>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white shadow-2xl rounded-xl p-10 max-w-lg w-full border border-gray-100 backdrop-blur-sm bg-opacity-90 relative z-10">
+    
+    <!-- Flash messages - replace with actual server-side rendering if integrating with a backend -->
+    <!-- This is a static placeholder for demonstration -->
+    
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div class="mb-6">
+        <ul class="flashes bg-red-50 text-red-700 text-sm p-4 rounded-lg border border-red-200" role="alert" aria-live="polite">
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    {% endwith %}
+   
+    <div id="flash-messages" class="mb-6 hidden">
+      <ul class="flashes bg-red-50 text-red-700 text-sm p-4 rounded-lg border border-red-200" role="alert" aria-live="polite">
+        <li>This is a placeholder for a warning message!</li>
+      </ul>
+    </div>
+
+
+    <div class="flex flex-col items-center justify-center mb-8">
+      <!-- Hospital Cross Icon (SVG) - Modern and Professional -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 13v-6m-3 3h6"/>
+      </svg>
+      <h2 class="text-4xl font-extrabold text-gray-800 tracking-tight">HMS Login</h2>
+      <p class="text-gray-500 mt-2 text-lg">Secure Access to Hospital System</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('login') }}" class="space-y-6">
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+        <input type="email" name="email" id="email" required placeholder="your.email@example.com"
+          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-focus-glow transition duration-200 ease-in-out" />
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        <input type="password" name="password" id="password" required placeholder="••••••••"
+          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none input-focus-glow transition duration-200 ease-in-out" autocomplete="new-password"/>
+      </div>
+      <button type="submit"
+        class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-lg shadow-lg btn-primary transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Sign In Securely
+      </button>
+    </form>
+
+    <p class="mt-8 text-sm text-center text-gray-600">
+      New to HMS?
+      <a href="{{ url_for('register') }}" class="text-blue-600 hover:text-blue-800 font-medium hover:underline transition duration-150 ease-in-out">Register your account</a>
+    </p>
+  </div>
+
+  <script>
+    // Simulate a flash message for demonstration
+    document.addEventListener('DOMContentLoaded', () => {
+      // Uncomment the line below to show a simulated flash message on load
+      // document.getElementById('flash-messages').classList.remove('hidden');
+    });
+
+    setTimeout(() => {
+      const flash = document.querySelector('.flashes');
+      if (flash) {
+        flash.style.transition = 'opacity 0.5s ease';
+        flash.style.opacity = '0';
+        setTimeout(() => flash.remove(), 500);
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

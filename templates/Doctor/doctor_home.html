@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doctor Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-blue-50 text-gray-800 font-sans">
+
+  <div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-gray-200 p-6 space-y-8 shadow-md">
+      <div class="flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow">
+          TP
+        </div>
+        <div class="mt-2">
+          <h2 class="text-lg font-semibold">{{full_name}}</h2>
+          <p class="text-sm text-gray-500">{{email}}</p>
+        </div>
+        <a href="/logout" class="mt-5 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md font-medium shadow-sm text-center">Log Out</a>
+      </div>
+
+      <nav class="text-sm space-y-1 font-medium">
+        <a href="/doctor_Home" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-blue-600 text-white shadow">
+          🏠 <span>Home</span>
+        </a>
+        <a href="/doctor_Appointments" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          📖 <span>My Appointment</span>
+        </a>
+        <a href="/doctor_Patient_List" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          👨‍⚕️ <span>Patient List</span>
+        </a>
+        <a href="/doctor_Medical_Records" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          📅 <span>Medical Record</span>
+        </a>
+        <!-- <a href="/doctor_Prescription_Management" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          💊 <span>Prescriptions Management</span>
+        </a> -->
+        <a href="/doctor_Profile_Management" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          ⚙️ <span>Profile Management</span>
+        </a>
+        <a href="/doctor_Chatbot" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          🤖 <span>Chat With AI for Medical Solutions</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-10 overflow-y-auto space-y-10">
+      
+      <!-- Header -->
+      <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold">Dashboard</h1>
+        <div class="text-lg font-semibold text-gray-800" id="todayDate">Loading...</div>
+      </div>
+
+      <!-- Welcome Section -->
+      <section class="bg-cover bg-center bg-no-repeat rounded-md p-6 md:p-10 text-black"
+              style="background-image: url('{{ url_for('static', filename='images/doctor.jpg') }}');">
+        <div class="bg-black bg-opacity-0 rounded-md p-6 md:p-10 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0 md:space-x-6">
+          
+          <!-- Text Content -->
+          <div class="md:w-2/3 space-y-3 ">
+            <h2 class="text-lg font-semibold">Welcome!</h2>
+            <h3 class="text-4xl font-bold">Test Doctor.</h3>
+            <p>
+              Thanks for joining with us. We are always trying to get you a complete service. <br>
+              You can view your daily schedule, reach patients’ appointments at home!
+            </p>
+            <a href="/doctor_Appointments">
+              <button class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-all">
+                View My Appointments
+              </button>
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- Status and Upcoming Booking -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Status Cards -->
+        <div>
+          <h3 class="text-lg font-semibold mb-3">Quick Stats</h3>
+          <div class="grid grid-cols-2 gap-4 h-60">
+            <div class="bg-blue-50 p-6 rounded-xl shadow text-center transition-transform transform hover:scale-105">
+              <div class="text-2xl font-bold text-blue-700">1</div>
+              <div class="text-sm text-gray-700">All Doctors</div>
+            </div>
+            <div class="bg-green-50 p-6 rounded-xl shadow text-center transition-transform transform hover:scale-105">
+              <div class="text-2xl font-bold text-green-700">2</div>
+              <div class="text-sm text-gray-700">All Patients</div>
+            </div>
+            <div class="bg-yellow-50 p-6 rounded-xl shadow text-center transition-transform transform hover:scale-105">
+              <div class="text-2xl font-bold text-yellow-600">1</div>
+              <div class="text-sm text-gray-700">New Booking</div>
+            </div>
+            <div class="bg-red-50 p-6 rounded-xl shadow text-center transition-transform transform hover:scale-105">
+              <div class="text-2xl font-bold text-red-600">0</div>
+              <div class="text-sm text-gray-700">Today Sessions</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Booking Table -->
+        <div>
+          <h3 class="text-lg font-semibold mb-3">Your Upcoming Sessions until Next Week</h3>
+          <div class="bg-white p-4 rounded-s shadow overflow-auto h-60">
+            <table class="min-w-full text-sm">
+              <thead>
+                <tr class="text-left border-b font-medium text-gray-600">
+                  <th class="p-2">Session Title</th>
+                  <th class="p-2">Schedule Date</th>
+                  <th class="p-2">Date & Time</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const today = new Date().toISOString().split("T")[0];
+            document.getElementById("todayDate").textContent = today;
+        });
+    </script>
+
+
+</body>
+</html>

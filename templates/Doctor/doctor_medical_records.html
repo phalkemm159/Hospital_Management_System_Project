@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Records</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Removed redundant Tailwind CDN script -->
+    <script src="{{ url_for('static', filename='medical.js') }}"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="flex min-h-screen">
+      <!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-gray-200 p-6 space-y-8 shadow-md">
+      <div class="flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow">
+          TP
+        </div>
+        <div class="mt-2">
+          <h2 class="text-lg font-semibold">{{full_name}}</h2>
+          <p class="text-sm text-gray-500">{{email}}</p>
+        </div>
+        <a href="/logout" class="mt-5 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md font-medium shadow-sm text-center">Log Out</a>
+      </div>
+
+      <nav class="text-sm space-y-1 font-medium">
+        <a href="/doctor_Home" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          🏠 <span>Home</span>
+        </a>
+        <a href="/doctor_Appointments" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          📖 <span>My Appointment</span>
+        </a>
+        <a href="/doctor_Patient_List" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          👨‍⚕️ <span>Patient List</span>
+        </a>
+        <a href="/doctor_Medical_Records" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-blue-600 text-white shadow">
+          📅 <span>Medical Record</span>
+        </a>
+        <!-- <a href="/doctor_Prescription_Management" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          💊 <span>Prescriptions Management</span>
+        </a> -->
+        <a href="/doctor_Profile_Management" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          ⚙️ <span>Profile Management</span>
+        </a>
+        <a href="/doctor_Chatbot" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          🤖 <span>Chat With AI for Medical Solutions</span>
+        </a>
+      </nav>
+    </aside>
+
+      <!-- Main Content -->
+    <main class="flex-1 p-8 overflow-y-auto">
+      <header class="flex items-center justify-between mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Medical Records</h1>
+        <button onclick="openModal()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          ➕ Add Medical Record
+        </button>
+      </header>
+
+      <!-- Modal Overlay -->
+      <div id="recordModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl relative">
+          <button onclick="closeModal()" class="absolute top-3 right-5 text-gray-500 hover:text-red-600 text-3xl font-bold">&times;</button>
+          <h1 class="text-2xl font-bold mb-4">Add Medical Record</h1>
+          <form action="/add_medical_record" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-1 gap-6">
+              <!-- Patient Selection -->
+              <div>
+                <label for="patient_id" class="block text-sm font-semibold text-gray-700 mb-1">Select Patient</label>
+                <select name="patient_id" id="patient_id" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="" disabled selected>-- Choose Patient --</option>
+                  {% for patient in patients %}
+                  <option value="{{ patient['patient_id'] }}">{{ patient['patient_name'] }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            
+              <!-- Diagnosis -->
+              <div>
+                <label for="diagnosis" class="block text-sm font-semibold text-gray-700 mb-1">Diagnosis</label>
+                <input type="text" name="diagnosis" id="diagnosis" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., Hypertension" />
+              </div>
+            
+              <!-- Lab Report Upload -->
+              <div>
+                <label for="lab_report" class="block text-sm font-semibold text-gray-700 mb-1">Upload Lab Report</label>
+                <input type="file" name="lab_report" id="lab_report" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+              </div>
+            </div>
+          
+            <!-- Submit Button -->
+            <div class="flex justify-end">
+              <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition duration-200">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+      <!-- Record History -->
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Patient History</h2>
+        <table class="w-full table-auto border">
+          <thead>
+            <tr class="bg-gray-100 text-left">
+              <th class="p-2">Patient</th>
+              <th class="p-2">Diagnosis</th>
+              <th class="p-2">Prescription</th>
+              <th class="p-2">Document</th>
+              <th class="p-2">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for medical_records in medical_records %}
+            <tr class="border-t text-sm">
+              <td class="p-2">{{ medical_records.patient_name }}</td>
+              <td class="p-2">{{ medical_records.diagnosis }}</td>
+              <td class="p-2">
+                <div class="flex gap-2 mt-2 sm:mt-0">
+                  <!-- Add Button -->
+                  <button onclick="openPrescriptionForm({{ medical_records.id }})"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm shadow-sm transition">
+                      Add
+                  </button>
+
+                  <!-- View Button -->
+                  <a href="{{ url_for('view_prescription', patient_id=medical_records.patient_id, record_id=medical_records.id) }}"
+                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md text-sm shadow-sm transition">
+                    View
+                  </a>
+
+                </div>
+              </td>
+              <td class="p-2">
+                {% if medical_records.document_path %}
+                <a href="{{ url_for('static', filename='uploads/' + medical_records.document_path) }}" target="_blank" class="text-blue-600 underline">View</a>
+                {% else %}
+                <span class="text-gray-400">N/A</span>
+                {% endif %}
+              </td>
+              <td class="p-2">{{ medical_records.date }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <!-- Add Prescription Modal -->
+        <div id="addPrescriptionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+          <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-4xl relative max-h-screen overflow-y-auto">
+            <button onclick="closePrescriptionModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Add Prescription</h2>
+
+            <form action="/add_prescription" method="POST" class="space-y-4">
+              <input type="hidden" name="record_id" id="prescription_record_id" />
+              <!-- Medication Section Start -->
+              <div class="min-h-80 mb-4">
+                <div class="flex items-start">
+                  <div class="text-6xl font-bold text-red-600 mr-6 leading-none">℞</div>
+                  <div class="flex-1">
+                    <div id="medications-container" class="space-y-6">
+                      <!-- One medication template (can be cloned) -->
+                      <div class="medication-section border border-gray-300 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-4">
+                          <h3 class="text-lg font-bold text-gray-800">Medication #1</h3>
+                          <button type="button" onclick="removeMedication(this)" class="no-print bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded transition-colors">
+                            Remove
+                          </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                          <div class="space-y-2">
+                            <label class="block text-sm font-bold text-gray-700">Medication Name & Strength:</label>
+                            <input name="medication_name[]" type="text" required class="w-full border-b border-gray-800 bg-transparent pb-1 focus:border-blue-500 focus:outline-none text-base" placeholder="e.g., Amoxicillin 500mg">
+                          </div>
+                          <div class="space-y-2">
+                            <label class="block text-sm font-bold text-gray-700">Quantity:</label>
+                            <input name="quantity[]" type="text" required class="w-full border-b border-gray-800 bg-transparent pb-1 focus:border-blue-500 focus:outline-none text-base" placeholder="e.g., #30">
+                          </div>
+                          <div class="space-y-2">
+                            <label class="block text-sm font-bold text-gray-700">Refills:</label>
+                            <input name="refills[]" type="number" min="0" max="5" class="w-full border-b border-gray-800 bg-transparent pb-1 focus:border-blue-500 focus:outline-none text-base" placeholder="0-5">
+                          </div>
+                        </div>
+
+                        <div class="space-y-2">
+                          <label class="block text-sm font-bold text-gray-700">Sig (Directions for Use):</label>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                              <label class="block text-xs font-medium text-gray-600">Frequency:</label>
+                              <select name="frequency[]" class="w-full border border-gray-300 rounded p-2 focus:border-blue-500 focus:outline-none bg-white">
+                                <option value="">Select frequency</option>
+                                <option>Once daily</option>
+                                <option>Twice daily</option>
+                                <option>Three times daily</option>
+                                <option>Four times daily</option>
+                                <option>Every 4 hours</option>
+                                <option>Every 6 hours</option>
+                                <option>Every 8 hours</option>
+                                <option>Every 12 hours</option>
+                                <option>As needed</option>
+                                <option>At bedtime</option>
+                              </select>
+                            </div>
+                            <div class="space-y-2">
+                              <label class="block text-xs font-medium text-gray-600">Timing:</label>
+                              <select name="timing[]" class="w-full border border-gray-300 rounded p-2 focus:border-blue-500 focus:outline-none bg-white">
+                                <option value="">Select timing</option>
+                                <option>With food</option>
+                                <option>Without food</option>
+                                <option>On empty stomach</option>
+                                <option>With water</option>
+                                <option>Before meals</option>
+                                <option>After meals</option>
+                                <option>With meals</option>
+                                <option>Before bedtime</option>
+                              </select>
+                            </div>
+                          </div>
+
+
+                          <div class="space-y-2">
+                            <label class="block text-xs font-medium text-gray-600">Additional Instructions (Optional):</label>
+                            <textarea name="instructions[]" class="w-full border border-gray-300 rounded p-2 focus:border-blue-500 focus:outline-none resize-y min-h-16 text-sm" placeholder="Add any special instructions or warnings"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button type="button" onclick="addMedication()" class="no-print mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                      Add Another Medication
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Medication Section End -->
+
+              <div class="flex justify-end pt-4">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md font-medium transition">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+
+        
+        <!-- View Prescription Modal -->
+        <div id="viewPrescriptionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+          <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-xl relative">
+            <button onclick="closeViewModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Prescription Details</h2>
+            <div class="space-y-4 text-gray-700">
+              <p><strong>Medicines:</strong> <span id="view_medicines" class="text-gray-900"></span></p>
+              <p><strong>Dosage:</strong> <span id="view_dosage" class="text-gray-900"></span></p>
+              <p><strong>Instructions:</strong> <span id="view_instructions" class="text-gray-900"></span></p>
+              <p><strong>Date:</strong> <span id="view_date" class="text-gray-900"></span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+    <script>
+  function addMedication() {
+    const container = document.getElementById("medications-container");
+    const lastSection = container.querySelector(".medication-section:last-child");
+    const clone = lastSection.cloneNode(true);
+
+    // Update title
+    const medCount = container.querySelectorAll(".medication-section").length + 1;
+    clone.querySelector("h3").innerText = `Medication #${medCount}`;
+
+    // Clear input values
+    clone.querySelectorAll("input, textarea").forEach(input => input.value = "");
+    clone.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
+
+    container.appendChild(clone);
+  }
+
+  function removeMedication(button) {
+    const container = document.getElementById("medications-container");
+    const sections = container.querySelectorAll(".medication-section");
+
+    if (sections.length > 1) {
+      button.closest(".medication-section").remove();
+
+      // Re-number headers
+      container.querySelectorAll(".medication-section h3").forEach((h3, index) => {
+        h3.innerText = `Medication #${index + 1}`;
+      });
+    } else {
+      alert("At least one medication is required.");
+    }
+  }
+
+  
+
+  // Attach onchange handlers for Sig generation
+  document.addEventListener("input", function (e) {
+    if (e.target.matches('select[name="frequency[]"], select[name="timing[]"], select[name="duration[]"]')) {
+      updateSig(e.target);
+    }
+  });
+</script>
+  <script>
+        function openPrescriptionForm(recordId) {
+      document.getElementById("prescription_record_id").value = recordId;
+      document.getElementById("addPrescriptionModal").classList.remove("hidden");
+    }
+    
+    function closePrescriptionModal() {
+      document.getElementById("addPrescriptionModal").classList.add("hidden");
+    }
+    
+    function closeViewModal() {
+      document.getElementById("viewPrescriptionModal").classList.add("hidden");
+    }
+    
+    function viewPrescription(recordId) {
+      fetch(`/get_prescription/${recordId}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            alert("No prescription found.");
+          } else {
+            document.getElementById("view_medicines").innerText = data.medicines;
+            document.getElementById("view_dosage").innerText = data.dosage;
+            document.getElementById("view_instructions").innerText = data.instructions;
+            document.getElementById("view_date").innerText = data.date;
+            document.getElementById("viewPrescriptionModal").classList.remove("hidden");
+          }
+        });
+    }
+    
+  </script>
+  <script>
+    function openModal() {
+      document.getElementById("recordModal").classList.remove("hidden");
+    }
+  
+    function closeModal() {
+      document.getElementById("recordModal").classList.add("hidden");
+    }
+  </script>
+
+</body>
+</html>

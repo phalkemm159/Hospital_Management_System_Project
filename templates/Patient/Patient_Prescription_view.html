@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prescription Viewer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .prescription-content, .prescription-content * {
+        visibility: visible;
+      }
+      .prescription-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-blue-50 text-gray-800 font-sans">
+
+<div class="flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-72 bg-white border-r border-gray-200 p-6 space-y-8 shadow-md no-print">
+    <div class="flex flex-col items-center text-center">
+      <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow">
+        TP
+      </div>
+      <div class="mt-2">
+        <h2 class="text-lg font-semibold">{{full_name}}</h2>
+        <p class="text-sm text-gray-500">{{email}}</p>
+      </div>
+      <a href="/logout" class="mt-5 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md font-medium shadow-sm text-center">Log Out</a>
+    </div>
+
+    <nav class="text-sm space-y-1 font-medium">
+      <a href="/Patient_home" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">🏠 <span>Home</span></a>
+      <a href="/Patient_Booking" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">📖 <span>My Bookings</span></a>
+      <a href="/Patient_All_Doctors" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">👨‍⚕️ <span>All Doctors</span></a>
+      <a href="/Patient_Medical_History" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">📅 <span>Medical History</span></a>
+      <a href="/Patient_Prescription_view" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-blue-600 text-white shadow">📅 <span>Prescriptions</span></a>
+      <a href="/Patient_Setting" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">⚙️ <span>Settings</span></a>
+      <a href="/patient_Chatbot"
+        class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+        🤖 <span>Chat With AI for Medical Solutions</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-6 sm:p-10 overflow-y-auto space-y-10 bg-gray-100 min-h-screen">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center no-print">
+      <h1 class="text-3xl font-bold text-gray-800">Prescription Viewer</h1>
+      <div class="text-lg font-medium text-gray-700" id="todayDate">{{ date }}</div>
+    </div>
+
+    <!-- Print Button -->
+    <div class="no-print flex justify-end mb-6">
+      <button onclick="window.print()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-5 rounded-lg flex items-center gap-2 transition-all shadow">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+        </svg>
+        Print Prescription
+      </button>
+    </div>
+
+    <!-- Prescription Content -->
+    <div class="prescription-content bg-white border-2 border-gray-800 p-8 rounded-lg shadow-lg print:shadow-none print:border-black">
+
+      <!-- Clinic Header -->
+      <div class="text-center border-b-2 border-gray-800 pb-6 mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-1">CITY MEDICAL CENTER</h2>
+        <p class="text-sm text-gray-600">456 City Hospital, Banjara Colony, Hingoli - 431513</p>
+        <p class="text-sm text-gray-600">Phone: {{doctor.phone_number}} | License #: CA987654321</p>
+      </div>
+
+      <!-- Patient Information -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 bg-gray-50 p-5 rounded-lg shadow-inner">
+        <div>
+          <p class="text-sm font-semibold text-gray-600">Patient Name:</p>
+          <p class="text-base font-medium border-b border-gray-300 pb-1">{{ patient.full_name }}</p>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-600">Date of Birth:</p>
+          <p class="text-base font-medium border-b border-gray-300 pb-1">{{ patient.dob }}</p>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-600">Address:</p>
+          <p class="text-base font-medium border-b border-gray-300 pb-1">{{ patient.address }}</p>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-600">Phone Number:</p>
+          <p class="text-base font-medium border-b border-gray-300 pb-1">{{ patient.phone_number }}</p>
+        </div>
+      </div>
+
+      <!-- Prescription List -->
+      <div class="mb-10">
+        <div class="flex items-center mb-4">
+          <div class="text-4xl text-red-600 font-bold mr-3 select-none">℞</div>
+          <h3 class="text-2xl font-semibold text-gray-800">Prescription Details</h3>
+        </div>
+
+        <div class="overflow-x-auto rounded-md shadow ring-1 ring-gray-300">
+          <table class="min-w-full divide-y divide-gray-300 bg-white">
+            <thead class="bg-gray-100 text-sm text-gray-700 font-semibold">
+              <tr>
+                <th class="px-4 py-3">#</th>
+                <th class="px-4 py-3">Medication</th>
+                <th class="px-4 py-3">Quantity</th>
+                <th class="px-4 py-3">Refills</th>
+                <th class="px-4 py-3">Frequency</th>
+                <th class="px-4 py-3">Timing</th>
+                <th class="px-4 py-3">Instructions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 text-sm">
+              {% for prescription in prescriptions %}
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3 font-medium text-gray-900">{{ loop.index }}</td>
+                <td class="px-4 py-3 text-gray-800">{{ prescription.medication_name }}</td>
+                <td class="px-4 py-3 text-gray-800">{{ prescription.quantity }}</td>
+                <td class="px-4 py-3 text-gray-800">{{ prescription.refills }}</td>
+                <td class="px-4 py-3 text-gray-800">{{ prescription.frequency }}</td>
+                <td class="px-4 py-3 text-gray-800">{{ prescription.timing }}</td>
+                <td class="px-4 py-3 text-gray-800">{{ prescription.additional_instructions }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Signature Section -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10 pt-6 border-t border-gray-300">
+        <div class="text-center">
+          <div class="border-b border-gray-800 h-12 mb-2 flex items-end justify-center">
+            <span class="text-lg text-gray-800 pb-1">Dr. {{ doctor.full_name }}</span>
+          </div>
+          <p class="text-sm text-gray-600">Doctor's Signature</p>
+        </div>
+        <div class="text-center">
+          <div class="border-b border-gray-800 h-12 mb-2 flex items-end justify-center">
+            <span class="text-base text-gray-800 pb-1">{{ date }}</span>
+          </div>
+          <p class="text-sm text-gray-600">Date Issued</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("todayDate").textContent = today;
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Patient Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-blue-50 text-gray-800 font-sans">
+
+  <div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-gray-200 p-6 space-y-8 shadow-md">
+      <div class="flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow">
+          TP
+        </div>
+        <div class="mt-2">
+          <h2 class="text-lg font-semibold">{{full_name}}</h2>
+          <p class="text-sm text-gray-500">{{email}}</p>
+        </div>
+        <a href="/logout" class="mt-5 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md font-medium shadow-sm text-center">Log Out</a>
+      </div>
+
+      <nav class="text-sm space-y-1 font-medium">
+        <a href="/Patient_home" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-blue-600 text-white shadow">
+          🏠 <span>Home</span>
+        </a>
+        <a href="/Patient_Booking" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          📖 <span>My Bookings</span>
+        </a>
+        <a href="/Patient_All_Doctors" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          👨‍⚕️ <span>All Doctors</span>
+        </a>
+        <a href="/Patient_Medical_History" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          📅 <span>Medical History</span>
+        </a>
+        <a href="/Patient_Prescription_view" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          📅 <span>Prescriptions</span>
+        </a>
+        <a href="/Patient_Setting" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          ⚙️ <span>Settings</span>
+        </a>
+        <a href="/patient_Chatbot"
+          class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          🤖 <span>Chat With AI for Medical Solutions</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-10 overflow-y-auto space-y-10">
+      
+      <!-- Header -->
+      <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold">Patient Dashboard</h1>
+        <div class="text-lg font-semibold text-gray-800" id="todayDate">Loading...</div>
+      </div>
+
+      <!-- Welcome Section -->
+      <section class="bg-white p-6 rounded-2xl shadow-md flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0 md:space-x-6">
+        <div class="space-y-4 max-w-xl">
+          <h2 class="text-xl md:text-2xl font-bold">Welcome, <span class="text-blue-600">{{full_name}}</span> 👋</h2>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Not sure where to begin? Explore <strong>"All Doctors"</strong> or <strong>"My Booking"</strong>. <br/>
+            Check appointment history and arrival times.
+          </p>
+          <div class="flex">
+            <input type="text" placeholder="Search Doctor..." class="flex-1 px-4 py-2 border rounded-l-md border-gray-300 focus:outline-none"/>
+            <button class="px-4 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">Search</button>
+          </div>
+        </div>
+        <img src="https://i.ibb.co/ZYW3VTp/bundled-masks.png" alt="Masks" class="w-40 md:w-56">
+      </section>
+
+      <!-- Status and Upcoming Booking -->
+      <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Quick Stats Cards -->
+        <div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Quick Stats</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div class="bg-blue-50 p-4 rounded-xl shadow text-center hover:scale-105 transform transition-transform">
+              <div class="text-2xl font-bold text-blue-700">2</div>
+              <div class="text-sm text-gray-700">Upcoming Appointments</div>
+            </div>
+            <div class="bg-green-50 p-4 rounded-xl shadow text-center hover:scale-105 transform transition-transform">
+              <div class="text-2xl font-bold text-green-700">5</div>
+              <div class="text-sm text-gray-700">Completed Visits</div>
+            </div>
+            <div class="bg-yellow-50 p-4 rounded-xl shadow text-center hover:scale-105 transform transition-transform">
+              <div class="text-2xl font-bold text-yellow-600">3</div>
+              <div class="text-sm text-gray-700">Prescriptions</div>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-xl shadow text-center hover:scale-105 transform transition-transform">
+              <div class="text-2xl font-bold text-purple-700">6</div>
+              <div class="text-sm text-gray-700">Medical Records</div>
+            </div>
+            <div class="bg-indigo-50 p-4 rounded-xl shadow text-center hover:scale-105 transform transition-transform">
+              <div class="text-2xl font-bold text-indigo-700">4</div>
+              <div class="text-sm text-gray-700">Doctors Visited</div>
+            </div>
+            <div class="bg-red-50 p-4 rounded-xl shadow text-center hover:scale-105 transform transition-transform">
+              <div class="text-2xl font-bold text-red-600">₹ 0.00</div>
+              <div class="text-sm text-gray-700">Pending Bills</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Booking Table -->
+        <div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Your Upcoming Booking</h3>
+          <div class="bg-white rounded-xl shadow overflow-x-auto">
+            <table class="min-w-full text-sm divide-y divide-gray-200">
+              <thead class="bg-gray-100 text-gray-700 font-semibold">
+                <tr>
+                  <th class="p-3 text-left">Appointment #</th>
+                  <th class="p-3 text-left">Session Title</th>
+                  <th class="p-3 text-left">Doctor</th>
+                  <th class="p-3 text-left">Date & Time</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                <tr class="hover:bg-gray-50">
+                  <td class="p-3">1</td>
+                  <td class="p-3">Test Session</td>
+                  <td class="p-3">Test Doctor</td>
+                  <td class="p-3">2050-01-01 18:00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const today = new Date().toISOString().split("T")[0];
+            document.getElementById("todayDate").textContent = today;
+        });
+    </script>
+
+
+</body>
+</html>

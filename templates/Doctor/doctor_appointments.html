@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Appointments</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+  <div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-gray-200 p-6 space-y-8 shadow-md">
+      <div class="flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow">
+          TP
+        </div>
+        <div class="mt-2">
+          <h2 class="text-lg font-semibold">{{full_name}}</h2>
+          <p class="text-sm text-gray-500">{{email}}</p>
+        </div>
+        <a href="/logout" class="mt-5 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md font-medium shadow-sm text-center">Log Out</a>
+      </div>
+
+      <nav class="text-sm space-y-1 font-medium">
+        <a href="/doctor_Home" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          🏠 <span>Home</span>
+        </a>
+        <a href="/doctor_Appointments" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-blue-600 text-white shadow">
+          📖 <span>My Appointment</span>
+        </a>
+        <a href="/doctor_Patient_List" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          👨‍⚕️ <span>Patient List</span>
+        </a>
+        <a href="/doctor_Medical_Records" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          📅 <span>Medical Record</span>
+        </a>
+        <!-- <a href="/doctor_Prescription_Management" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          💊 <span>Prescriptions Management</span>
+        </a> -->
+        <a href="/doctor_Profile_Management" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          ⚙️ <span>Profile Management</span>
+        </a>
+        <a href="/doctor_Chatbot" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition duration-200">
+          🤖 <span>Chat With AI for Medical Solutions</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 overflow-y-auto">
+      <header class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Appointments</h1>
+      </header>
+
+      <!-- Tab Navigation -->
+      <div class="mb-6">
+        <div class="flex space-x-1 sm:space-x-2 border-b border-gray-200">
+          <button class="tab-btn px-3 py-2 border-b-2 border-blue-600 text-blue-600 font-semibold" data-tab="upcoming">Upcoming</button>
+          <!-- You can add more tabs like Today, Past, Completed -->
+        </div>
+      </div>
+
+      <!-- Appointments Table -->
+      <div class="bg-white p-0 sm:p-2 rounded-lg shadow-md overflow-x-auto">
+        <div id="tab-upcoming" class="tab-section">
+          <table class="w-full table-auto border">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="p-2">Patient</th>
+                <th class="p-2">Date</th>
+                <th class="p-2">Time</th>
+                <th class="p-2">Status</th>
+                <th class="p-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for appt in appointments %}
+              <tr class="text-center border-t">
+                <td class="p-2">{{ appt['patient_name'] }}</td>
+                <td class="p-2">{{ appt['appointment_date'] }}</td>
+                <td class="p-2">{{ appt['appointment_time'] }}</td>
+                <td class="p-2">{{ appt['status'] }}</td>
+                <td class="p-2 space-x-2">
+                  {% if appt['status'] == 'pending' %}
+                  <form action="/approve_appointment" method="POST" class="flex flex-col md:flex-row items-center gap-2 justify-center">
+                    <input type="hidden" name="appointment_id" value="{{ appt['id'] }}">
+                    <input type="time" name="approved_time" required class="border px-2 py-1 rounded">
+                    <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
+                      Approve
+                    </button>
+                    <a href="/reject_appointment/{{ appt['id'] }}" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 block">Reject</a>
+                  </form>
+                  {% else %}
+                  <span class="text-gray-500">No action</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Tab JS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const tabSections = document.querySelectorAll(".tab-section");
+
+      function showTab(tab) {
+        tabSections.forEach((section) => {
+          section.style.display = section.id === `tab-${tab}` ? "block" : "none";
+        });
+
+        tabButtons.forEach((btn) => {
+          btn.classList.toggle("text-blue-600", btn.dataset.tab === tab);
+          btn.classList.toggle("border-blue-600", btn.dataset.tab === tab);
+          btn.classList.toggle("text-gray-500", btn.dataset.tab !== tab);
+          btn.classList.toggle("border-transparent", btn.dataset.tab !== tab);
+        });
+      }
+
+      tabButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          showTab(btn.dataset.tab);
+        });
+      });
+
+      showTab("upcoming");
+    });
+  </script>
+</body>
+</html>
