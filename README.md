@@ -172,7 +172,7 @@ Alerts for upcoming appointments, prescription refills, and system updates.
 Stay tuned for regular updates and improvements! 😊
 
 ## 🙋‍♂️ Author
-**Mahesh Phalke**
+**Mahesh Phalke** & **Nishar Chavan**
 
 📫 Reach out to collaborate or connect:
 
