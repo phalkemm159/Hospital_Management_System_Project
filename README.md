@@ -4,6 +4,12 @@ A web-based Hospital Management System built with **Flask**, **SQLite3**, **Tail
 
 ---
 
+## 🌍 Live Demo
+
+You can try the Hospital Management System Live project here:  
+
+👉 https://hospital-management-system-w6nv.onrender.com](https://hospital-management-system-w6nv.onrender.com
+
 ## 📌 Features
 
 ### 🔐 Authentication & Security
@@ -151,7 +157,18 @@ Doctors and patients can upload and access medical documents securely.
 ### 🔔 Email/SMS Notifications
 Alerts for upcoming appointments, prescription refills, and system updates.
 
+## 🌍 Live Demo Try of Project Login info:
 
+- 1]Doctors:
+ a)email: mp159@gmail.com
+ password: password
+  b)email: mp158@gmail.com
+ password: password
+- 2]Patient:
+ a)email: mp1@gmail.com
+ password: password
+
+ 
 Stay tuned for regular updates and improvements! 😊
 
 ## 🙋‍♂️ Author
