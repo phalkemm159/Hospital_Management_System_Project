@@ -8,7 +8,7 @@ A web-based Hospital Management System built with **Flask**, **SQLite3**, **Tail
 
 You can try the Hospital Management System Live project here:  
 
-👉 https://hospital-management-system-w6nv.onrender.com](https://hospital-management-system-w6nv.onrender.com
+👉 https://hospital-management-system-w6nv.onrender.com
 
 ## 📌 Features
 
