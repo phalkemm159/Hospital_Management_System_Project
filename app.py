@@ -969,7 +969,7 @@ def chatbot():
     user_message = request.json.get("message")
     
     # Create model
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     
     # Add a system instruction so AI always responds like a doctor
     system_prompt = """
